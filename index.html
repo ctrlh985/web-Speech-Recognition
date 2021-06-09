@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum=1.0, user-scalable=no shrink-to-fit=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>语音识别</title>
+    <link rel="stylesheet" href="./css/base.css" />
+</head>
+
+<body>
+    <h1 class="h1">语音识别</h1>
+    <section class="voice-box">
+        <label>识别结果：</label>
+        <input type="search" name="voice" id="voice-input" />
+        <button id="start-btn">识别</button>
+    </section>
+
+    <h4 class="tips">点击识别按钮进行录音，录音过程中如3秒内没有检测到声音将结束录制</h4>
+
+    <section class="fixed-box" id="fixed-box">
+        <div class="fixed-main">
+            <button class="fixed-close" id="close-btn"></button>
+            <h5>正在录音</h5>
+            <div id="fixed-input"></div>
+            <div class="fixed-icon">
+                <img src="./img/voice.png" alt="" />
+            </div>
+        </div>
+    </section>
+
+    <script src="./js/crypto-js.js"></script>
+    <script src="./js/voice.js"></script>
+    <script>
+        window.onload = function () {
+
+            const voiceInput = document.querySelector('#voice-input');
+            const startBtn = document.querySelector('#start-btn');
+            const fixedBox = document.querySelector('#fixed-box');
+            const fixedInput = document.querySelector('#fixed-input');
+            const closeBtn = document.querySelector('#close-btn');
+
+            // 实例化迅飞语音听写（流式版）WebAPI
+            const iatRecorder = new IatRecorder({
+
+                // 服务接口认证信息 注：apiKey 和 apiSecret 的长度都差不多，请要填错哦！
+                appId: '32b074ae',
+                apiKey: '9328a73a672c19b045b50d137f3ff886',
+                apiSecret: 'MGE0OGYzNDQ1Mjk0YTNmZThiOTkwMDVl',
+                // 注：要获取以上3个参数，请到迅飞开放平台：https://www.xfyun.cn/services/voicedictation
+
+                onWillStatusChange: function (oldStatus, newStatus) {
+                    //可以在这里进行页面中一些交互逻辑处理：注：倒计时（语音听写只有60s）,录音的动画，按钮交互等！
+                    fixedBox.style.display = 'block';
+                },
+                onTextChange: function (text) {
+                    //监听识别结果的变化
+                    voiceInput.value = text;
+                    fixedInput.innerText = text;
+
+                }
+            });
+
+            // 开始识别
+            startBtn['onclick'] = function () {
+                iatRecorder.start();
+            };
+
+            // 关闭识别
+            closeBtn['onclick'] = function () {
+                iatRecorder.stop();
+                fixedBox.style.display = 'none';
+            };
+        };
+    </script>
+</body>
+
+</html>
